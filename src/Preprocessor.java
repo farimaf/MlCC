@@ -4,7 +4,7 @@
 public class Preprocessor {
 
     public static void main(String[] args) {
-        //new RandomSelecter().makeRandomTestTrain();
+        new RandomSelecter().makeRandomTestTrain();
         new CloneMetricsIntegrator().intergrate();
     }
 }

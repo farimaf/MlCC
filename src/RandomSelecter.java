@@ -27,7 +27,7 @@ public class RandomSelecter {
 
     public void makeRandomTestTrain()
     {
-        int filesCount=filesList.size();
+        //int filesCount=filesList.size();
         Random random=new Random(0);
         while (trainList.size()<=(int)filesList.size()*0.6) {
             int nextFile = random.nextInt(filesList.size());
@@ -44,7 +44,7 @@ public class RandomSelecter {
                 Files.copy(new File(inputPath+s).toPath(),new File(trainPath+"/"+s).toPath());
             }
             for (String s:testList){
-                Files.copy(new File(inputPath+"/"+s).toPath(),new File(testPath+"/"+s).toPath());
+                Files.copy(new File(inputPath+s).toPath(),new File(testPath+"/"+s).toPath());
             }
         }
         catch (IOException e){
