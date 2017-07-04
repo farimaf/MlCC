@@ -6,7 +6,7 @@ import java.util.HashSet;
  * Created by farima on 7/3/17.
  */
 public class CloneMetricsIntegrator {
-    
+
     private ArrayList<String> metricFilesList=new ArrayList<>();
     private PrintWriter printWriter;
     private String inputMetricsPath=  "./output/train/";
@@ -28,44 +28,57 @@ public class CloneMetricsIntegrator {
             e.printStackTrace();
         }
     }
-    
+
     public void intergrate(){
 
         BufferedReader bfMetrics;
         try {
             for (String fileName : metricFilesList) {
+                // read a project file for metrics
                 bfMetrics = new BufferedReader(new FileReader(inputMetricsPath + fileName));
 
                 ArrayList<String[]> methodMetrics=new ArrayList<>();
                 String line="";
                 while ((line=bfMetrics.readLine())!=null){
+                    // read all the rows in the metric file
                     methodMetrics.add(line.replace("\"","").split(","));
                 }
-
-                for (int i = 1; i <methodMetrics.size() ; i++){//start from 1 because of headers
-                if (!((methodMetrics.get(i)[1]).equals("1"))) {
-                    for (int j = i + 1; j < methodMetrics.size(); j++) {
-                        if (getPercentageDiff(Double.valueOf(methodMetrics.get(i)[8]),Double.valueOf(methodMetrics.get(j)[8]))<30.00)
-                            writeOnFile(getLineToWrite(methodMetrics.get(i), methodMetrics.get(j), false));
-                    }
-                }
-                else {
+                // read all clone pairs for this project
+                HashSet<String> clonesSet = new HashSet<>();
+                try {
                     BufferedReader bfClones = new BufferedReader(new FileReader(inputClonePath + fileName));
-                    HashSet<String> clonesList=new HashSet<>();
                     String lineClone="";
                     while ((lineClone=bfClones.readLine())!=null){
-                        clonesList.add(lineClone);
+                        clonesSet.add(lineClone);
                     }
-                    for (int j = i + 1; j < methodMetrics.size(); j++) {
-                        boolean isClone=clonesList.contains(methodMetrics.get(i)[0]+","+methodMetrics.get(j)[0])||
-                                clonesList.contains(methodMetrics.get(j)[0]+","+methodMetrics.get(i)[0]);
-                        if (getPercentageDiff(Double.valueOf(methodMetrics.get(i)[8]),Double.valueOf(methodMetrics.get(j)[8]))<30.00)
-                            writeOnFile(getLineToWrite(methodMetrics.get(i), methodMetrics.get(j), isClone));
+
+                }
+                catch (FileNotFoundException e){
+                    System.out.println(fileName+ " not found");
+                    continue;
+                }
+
+
+                for (int i = 1; i <methodMetrics.size() ; i++){//start from 1 because of headers
+
+                    if (!((methodMetrics.get(i)[1]).equals("1"))) {
+                        for (int j = i + 1; j < methodMetrics.size(); j++) {
+                            if (getPercentageDiff(Double.valueOf(methodMetrics.get(i)[8]),Double.valueOf(methodMetrics.get(j)[8]))<=30.00)
+                                writeOnFile(getLineToWrite(methodMetrics.get(i), methodMetrics.get(j), false));
+                        }
                     }
-                    clonesList.clear();
+                    else {
+                        for (int j = i + 1; j < methodMetrics.size(); j++) {
+                            boolean isClone=clonesSet.contains(methodMetrics.get(i)[0]+","+methodMetrics.get(j)[0])||
+                                    clonesSet.contains(methodMetrics.get(j)[0]+","+methodMetrics.get(i)[0]);
+                            if (getPercentageDiff(Double.valueOf(methodMetrics.get(i)[8]),Double.valueOf(methodMetrics.get(j)[8]))<=30.00)
+                                writeOnFile(getLineToWrite(methodMetrics.get(i), methodMetrics.get(j), isClone));
+                        }
+
                     }
                 }
                 System.out.println(fileName);
+                clonesSet.clear();
             }
             printWriter.close();
         }
@@ -105,7 +118,7 @@ public class CloneMetricsIntegrator {
         for (int i = 3; i <output.length ; i++) {
             output[i]=roundTwoDecimal(getPercentageDiff(Double.valueOf(firstLine[i+3]),Double.valueOf(secondLine[i+3]))).toString();
         }
- //       output[3]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
+        //       output[3]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
 //        output[4]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
 //        output[5]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
 //        output[6]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
