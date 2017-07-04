@@ -45,7 +45,8 @@ public class CloneMetricsIntegrator {
                 for (int i = 1; i <methodMetrics.size() ; i++){//start from 1 because of headers
                 if (!((methodMetrics.get(i)[1]).equals("1"))) {
                     for (int j = i + 1; j < methodMetrics.size(); j++) {
-                        writeOnFile(getLineToWrite(methodMetrics.get(i), methodMetrics.get(j), false));
+                        if (getPercentageDiff(Double.valueOf(methodMetrics.get(i)[8]),Double.valueOf(methodMetrics.get(j)[8]))<30.00)
+                            writeOnFile(getLineToWrite(methodMetrics.get(i), methodMetrics.get(j), false));
                     }
                 }
                 else {
@@ -58,7 +59,8 @@ public class CloneMetricsIntegrator {
                     for (int j = i + 1; j < methodMetrics.size(); j++) {
                         boolean isClone=clonesList.contains(methodMetrics.get(i)[0]+","+methodMetrics.get(j)[0])||
                                 clonesList.contains(methodMetrics.get(j)[0]+","+methodMetrics.get(i)[0]);
-                        writeOnFile(getLineToWrite(methodMetrics.get(i), methodMetrics.get(j), isClone));
+                        if (getPercentageDiff(Double.valueOf(methodMetrics.get(i)[8]),Double.valueOf(methodMetrics.get(j)[8]))<30.00)
+                            writeOnFile(getLineToWrite(methodMetrics.get(i), methodMetrics.get(j), isClone));
                     }
                     clonesList.clear();
                     }
