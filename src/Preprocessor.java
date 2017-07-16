@@ -8,5 +8,7 @@ public class Preprocessor {
         //new CloneMetricsIntegrator().intergrate();
         //new TrainRandomSampler().sampler();
         new SampleEqualCloneNonclone().sampler();
+        //new CloneMetricsIntegrator().intergrate();
+        //new TrainRandomSampler().sampler();
     }
 }

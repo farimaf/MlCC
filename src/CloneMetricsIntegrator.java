@@ -9,9 +9,9 @@ public class CloneMetricsIntegrator {
 
     private ArrayList<String> metricFilesList=new ArrayList<>();
     private PrintWriter printWriter;
-    private String inputMetricsPath=  "./output/train/";
+    private String inputMetricsPath=  "./output/test/";
     private String inputClonePath= "./input/clone_pairs/";
-    private String outputPath= "./output/train_integrated/train.txt";
+    private String outputPath= "./output/test_integrated/test.txt";
 
     public CloneMetricsIntegrator(){
         File folder = new File(inputMetricsPath);
