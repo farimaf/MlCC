@@ -1,4 +1,6 @@
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -7,17 +9,17 @@ import java.util.Random;
  * Created by farima on 7/5/17.
  */
 public class TrainRandomSampler {
-    private String inputPath= "./training_dataset/train.txt";
+    private String inputPath= "C:\\clone_data\\train.txt";
     private HashSet<String> readLines=new HashSet<>();
 
-    private final int SAMPLE_COUNT=10000;
+    private final int SAMPLE_COUNT=22151199*2;
     private PrintWriter printWriter;
 
     public TrainRandomSampler(){
         try{
             BufferedReader bufferedReader=new BufferedReader(new FileReader(inputPath));
             //linesCount=bufferedReader.lines().count();
-            printWriter=new PrintWriter("./output/train_integrated/train_sample.txt");
+            printWriter=new PrintWriter(Paths.get("./output/train_integrated/train_sample_large.txt").toString());
         }
         catch (Exception e){
             e.printStackTrace();
@@ -29,13 +31,13 @@ public class TrainRandomSampler {
         RandomAccessFile file;
 
         try {
-
+            Random random=new Random(12);
             file = new RandomAccessFile(f, "r");
             long file_size = file.length();
             int counter=0;
             while (counter<=SAMPLE_COUNT) {
                 // Let's start
-                long chosen_byte = (long) (Math.random() * (file_size - 1));
+                long chosen_byte = (long) (random.nextDouble() * (file_size - 1));
                 long cur_byte = chosen_byte;
 
                 // Goto starting position
@@ -80,6 +82,7 @@ public class TrainRandomSampler {
                     System.out.println("Ran out of bounds");
                 }
             }
+            printWriter.close();
 
         }
         catch (Exception e){
