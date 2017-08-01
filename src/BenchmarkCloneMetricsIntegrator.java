@@ -86,6 +86,7 @@ public class BenchmarkCloneMetricsIntegrator {
                     String[] methodAtHandNameSplitted=methodAtHandSpliited[0].split("\\.");
                     String methodAtHand=methodAtHandSpliited[1].split(",")[0]+"~~"+methodAtHandNameSplitted[0]+"~~"+
                             methodAtHandNameSplitted[1]+"~~"+methodAtHandNameSplitted[2];
+                    String[] atHandLines=methodAtHandSpliited[1].split(",");
                     System.out.println(methodAtHand);
                     //if (!((methodMetrics.get(i)[1]).equals("1"))) {
                     //String str="default~~JHawkDefaultPackage~~SoDoKu~~AC3(ConstraintSet,Domain)";
@@ -94,9 +95,14 @@ public class BenchmarkCloneMetricsIntegrator {
                             String[] methodMatchedNameSplitted=methodMatchedSpliited[0].split("\\.");
                             String methodMatched=methodMatchedSpliited[1].split(",")[0]+"~~"+methodMatchedNameSplitted[0]+"~~"+
                                     methodMatchedNameSplitted[1]+"~~"+methodMatchedNameSplitted[2];
+                            String[] matchedLines=methodMatchedNameSplitted[1].split(",");
                             if(metricFilesMap.containsKey(methodAtHand) && metricFilesMap.containsKey(methodMatched)) {
-                                if (getPercentageDiff(Double.valueOf(metricFilesMap.get(methodAtHand)[6]), Double.valueOf(metricFilesMap.get(methodMatched)[6])) <= 30.00)
-                                    writeOnFile(getLineToWrite(metricFilesMap.get(methodAtHand), metricFilesMap.get(methodMatched)));
+                                if (getPercentageDiff(Double.valueOf(metricFilesMap.get(methodAtHand)[6]), Double.valueOf(metricFilesMap.get(methodMatched)[6])) <= 30.00) {
+
+                                    writeOnFile(getLineToWrite(atHandLines[0]+","+atHandLines[1]+","+atHandLines[2]+","+atHandLines[3]
+                                            ,matchedLines[0]+","+matchedLines[1]+","+matchedLines[2]+","+matchedLines[3]
+                                            ,metricFilesMap.get(methodAtHand), metricFilesMap.get(methodMatched)));
+                                }
                             }
                        // }
 //                    }
@@ -122,7 +128,7 @@ public class BenchmarkCloneMetricsIntegrator {
     private void writeOnFile(String[] lineParams){
         String line="";
         for (int i = 0; i <lineParams.length ; i++) {
-            line+=lineParams[i]+",";
+            line+=lineParams[i]+"~~";
         }
         line=line.substring(0,line.length()-1);
         try{
@@ -142,11 +148,13 @@ public class BenchmarkCloneMetricsIntegrator {
         return Double.valueOf(Math.round(param*100.0)/100.0);
     }
 
-    private String[] getLineToWrite(String[] firstLine,String[] secondLine){
+    private String[] getLineToWrite(String firstLines,String secondLines,String[] firstLine,String[] secondLine){
         String output[]=new String[29];
-        output[0]=firstLine[0]+"."+firstLine[1]+"."+firstLine[2]+"."+firstLine[27];
-        output[1]=secondLine[0]+secondLine[1]+secondLine[2]+secondLine[27];
+//        output[0]=firstLine[0]+"."+firstLine[1]+"."+firstLine[2]+"."+firstLine[27];
+//        output[1]=secondLine[0]+secondLine[1]+secondLine[2]+secondLine[27];
        // output[2]=isClone?"1":"0";
+        output[0]=firstLines;
+        output[1]=secondLines;
         for (int i = 2; i <output.length ; i++) {
             if ((i+2)!=18 && (i+2)!=27)
                 output[i]=roundTwoDecimal(getPercentageDiff(Double.valueOf(firstLine[i+2]),Double.valueOf(secondLine[i+2]))).toString();
