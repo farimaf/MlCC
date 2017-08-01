@@ -20,25 +20,26 @@ public class BenchmarkCloneMetricsIntegrator {
 
     public BenchmarkCloneMetricsIntegrator(){
         try {
-            File folder = new File(inputMetricsPath);
-            File[] files = folder.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isFile()&&(files[i].getName().equals("sample.csv")||files[i].getName().equals("default.csv")||files[i].getName().equals("selected.csv"))) {
-                    BufferedReader bfMetrics = new BufferedReader(new FileReader( files[i]));
-                    String line = bfMetrics.readLine();//to ignore header row
-                    while ((line = bfMetrics.readLine()) != null) {
-                        String[] lineSplitted=line.replaceAll("\"","").split("~~");
-                        metricFilesMap.put(lineSplitted[0]+"~~"+lineSplitted[1]+"~~"+lineSplitted[2]+"~~"+lineSplitted[27],
-                                lineSplitted);
-                    }
-                }
-            }
-            System.out.println("Metrics read complete");
-            System.out.println("size:"+metricFilesMap.size());
+//            File folder = new File(inputMetricsPath);
+//            File[] files = folder.listFiles();
+//            for (int i = 0; i < files.length; i++) {
+//                if (files[i].isFile()&&(files[i].getName().equals("sample.csv")||files[i].getName().equals("default.csv")||files[i].getName().equals("selected.csv"))) {
+//                    BufferedReader bfMetrics = new BufferedReader(new FileReader( files[i]));
+//                    String line = bfMetrics.readLine();//to ignore header row
+//                    while ((line = bfMetrics.readLine()) != null) {
+//                        String[] lineSplitted=line.replaceAll("\"","").split("~~");
+//                        metricFilesMap.put(lineSplitted[0]+"~~"+lineSplitted[1]+"~~"+lineSplitted[2]+"~~"+lineSplitted[27],
+//                                lineSplitted);
+//                    }
+//                }
+//            }
+//            System.out.println("Metrics read complete");
+//            System.out.println("size:"+metricFilesMap.size());
             BufferedReader bfIjaMapping=new BufferedReader(new FileReader(Paths.get(inputIjaMappingPath).toString()));
             String line = "";
-            while ((line = bfIjaMapping.readLine()) != null && Integer.parseInt(line.split(":")[1].split(",")[4])>25) {//insert methods having more than 25 tokens
-                ijaMappingList.add(line);
+            while ((line = bfIjaMapping.readLine()) != null ) {//insert methods having more than 25 tokens
+               if(Integer.parseInt(line.split(":")[1].split(",")[4])>25)
+                   ijaMappingList.add(line);
             }
 
             System.out.println("ija mapping read complete");
