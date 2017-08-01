@@ -89,7 +89,6 @@ public class BenchmarkCloneMetricsIntegrator {
                     String methodAtHand=methodAtHandSpliited[1].split(",")[0]+"~~"+methodAtHandNameSplitted[0]+"~~"+
                             methodAtHandNameSplitted[1]+"~~"+methodAtHandNameSplitted[2];
                     String[] atHandLines=methodAtHandSpliited[1].split(",");
-                    //System.out.println(methodAtHand);
                     //if (!((methodMetrics.get(i)[1]).equals("1"))) {
                     //String str="default~~JHawkDefaultPackage~~SoDoKu~~AC3(ConstraintSet,Domain)";
                     //methodAtHand=str;
@@ -101,11 +100,8 @@ public class BenchmarkCloneMetricsIntegrator {
                             String[] matchedLines=methodMatchedSpliited[1].split(",");
                             //methodMatched=str;
                             if(metricFilesMap.containsKey(methodAtHand) && metricFilesMap.containsKey(methodMatched)) {
-                                System.out.println(methodAtHand);
-                                System.out.println(methodMatched);
                                 if (getPercentageDiff(Double.valueOf(metricFilesMap.get(methodAtHand)[6]), Double.valueOf(metricFilesMap.get(methodMatched)[6])) <= 30.00) {
-//                                    System.out.println(atHandLines.length);
-//                                    System.out.println(matchedLines.length);
+                                    System.out.println(methodAtHand);
                                     writeOnFile(getLineToWrite(atHandLines[0]+","+atHandLines[1]+","+atHandLines[2]+","+atHandLines[3]
                                             ,matchedLines[0]+","+matchedLines[1]+","+matchedLines[2]+","+matchedLines[3]
                                             ,metricFilesMap.get(methodAtHand), metricFilesMap.get(methodMatched)));
@@ -137,11 +133,10 @@ public class BenchmarkCloneMetricsIntegrator {
         for (int i = 0; i <lineParams.length ; i++) {
             line+=lineParams[i]+"~~";
         }
-        line=line.substring(0,line.length()-1);
+        line=line.substring(0,line.length()-2);//changed to 2 becasue ~~ has to chars
         try{
             printWriter.append(line+System.lineSeparator());
             System.out.println(line);
-
         }
         catch (Exception e){
             e.printStackTrace();
@@ -163,40 +158,11 @@ public class BenchmarkCloneMetricsIntegrator {
        // output[2]=isClone?"1":"0";
         String[] line1= removeNames(firstLine);
         String[] line2= removeNames(secondLine);
-        System.out.println(line1.length);
-        System.out.println(line1[29]);
         output[0]=firstLines;
         output[1]=secondLines;
         for (int i = 2; i <output.length ; i++) {
             output[i]=roundTwoDecimal(getPercentageDiff(Double.valueOf(line1[i+2]),Double.valueOf(line2[i+2]))).toString();
         }
-        //       output[3]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[4]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[5]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[6]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[7]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[8]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[9]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[10]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[11]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[12]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[13]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[14]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[15]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[16]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[17]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[18]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[19]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[20]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[21]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[22]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[23]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[24]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[25]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[26]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[27]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[28]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
-//        output[29]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
         return output;
     }
 
