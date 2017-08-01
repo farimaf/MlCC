@@ -34,13 +34,15 @@ public class BenchmarkCloneMetricsIntegrator {
                 }
             }
             System.out.println("Metrics read complete");
+            System.out.println("size:"+metricFilesMap.size());
             BufferedReader bfIjaMapping=new BufferedReader(new FileReader(Paths.get(inputIjaMappingPath).toString()));
             String line = "";
-            while ((line = bfIjaMapping.readLine()) != null && Integer.parseInt(line.split(":")[1].split(",")[4])>25) {
+            while ((line = bfIjaMapping.readLine()) != null && Integer.parseInt(line.split(":")[1].split(",")[4])>25) {//insert methods having more than 25 tokens
                 ijaMappingList.add(line);
             }
 
             System.out.println("ija mapping read complete");
+            System.out.println("size:"+ijaMappingList.size());
             printWriter = new PrintWriter(Paths.get(outputPath).toString());
         }
             catch (IOException e){
@@ -105,7 +107,6 @@ public class BenchmarkCloneMetricsIntegrator {
 //
 //                    }
                 }
-                System.out.println(methodAtHand);
                 //clonesSet.clear();
             }
             printWriter.close();
