@@ -95,11 +95,13 @@ public class BenchmarkCloneMetricsIntegrator {
                             String[] methodMatchedNameSplitted=methodMatchedSpliited[0].split("\\.");
                             String methodMatched=methodMatchedSpliited[1].split(",")[0]+"~~"+methodMatchedNameSplitted[0]+"~~"+
                                     methodMatchedNameSplitted[1]+"~~"+methodMatchedNameSplitted[2];
-                            String[] matchedLines=methodMatchedNameSplitted[1].split(",");
+                            String[] matchedLines=methodMatchedSpliited[1].split(",");
                             if(metricFilesMap.containsKey(methodAtHand) && metricFilesMap.containsKey(methodMatched)) {
                                 System.out.println(methodAtHand);
                                 System.out.println(methodMatched);
                                 if (getPercentageDiff(Double.valueOf(metricFilesMap.get(methodAtHand)[6]), Double.valueOf(metricFilesMap.get(methodMatched)[6])) <= 30.00) {
+//                                    System.out.println(atHandLines.length);
+//                                    System.out.println(matchedLines.length);
                                     writeOnFile(getLineToWrite(atHandLines[0]+","+atHandLines[1]+","+atHandLines[2]+","+atHandLines[3]
                                             ,matchedLines[0]+","+matchedLines[1]+","+matchedLines[2]+","+matchedLines[3]
                                             ,metricFilesMap.get(methodAtHand), metricFilesMap.get(methodMatched)));
