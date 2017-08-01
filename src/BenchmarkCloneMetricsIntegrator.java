@@ -20,21 +20,21 @@ public class BenchmarkCloneMetricsIntegrator {
 
     public BenchmarkCloneMetricsIntegrator(){
         try {
-//            File folder = new File(inputMetricsPath);
-//            File[] files = folder.listFiles();
-//            for (int i = 0; i < files.length; i++) {
-//                if (files[i].isFile()&&(files[i].getName().equals("sample.csv")||files[i].getName().equals("default.csv")||files[i].getName().equals("selected.csv"))) {
-//                    BufferedReader bfMetrics = new BufferedReader(new FileReader( files[i]));
-//                    String line = bfMetrics.readLine();//to ignore header row
-//                    while ((line = bfMetrics.readLine()) != null) {
-//                        String[] lineSplitted=line.replaceAll("\"","").split("~~");
-//                        metricFilesMap.put(lineSplitted[0]+"~~"+lineSplitted[1]+"~~"+lineSplitted[2]+"~~"+lineSplitted[27],
-//                                lineSplitted);
-//                    }
-//                }
-//            }
-//            System.out.println("Metrics read complete");
-//            System.out.println("size:"+metricFilesMap.size());
+            File folder = new File(inputMetricsPath);
+            File[] files = folder.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isFile()&&(files[i].getName().equals("sample.csv")||files[i].getName().equals("default.csv")||files[i].getName().equals("selected.csv"))) {
+                    BufferedReader bfMetrics = new BufferedReader(new FileReader( files[i]));
+                    String line = bfMetrics.readLine();//to ignore header row
+                    while ((line = bfMetrics.readLine()) != null) {
+                        String[] lineSplitted=line.replaceAll("\"","").split("~~");
+                        metricFilesMap.put(lineSplitted[0]+"~~"+lineSplitted[1]+"~~"+lineSplitted[2]+"~~"+lineSplitted[27],
+                                lineSplitted);
+                    }
+                }
+            }
+            System.out.println("Metrics read complete");
+            System.out.println("size:"+metricFilesMap.size());
             BufferedReader bfIjaMapping=new BufferedReader(new FileReader(Paths.get(inputIjaMappingPath).toString()));
             String line = "";
             while ((line = bfIjaMapping.readLine()) != null ) {//insert methods having more than 25 tokens
@@ -97,8 +97,9 @@ public class BenchmarkCloneMetricsIntegrator {
                                     methodMatchedNameSplitted[1]+"~~"+methodMatchedNameSplitted[2];
                             String[] matchedLines=methodMatchedNameSplitted[1].split(",");
                             if(metricFilesMap.containsKey(methodAtHand) && metricFilesMap.containsKey(methodMatched)) {
+                                System.out.println(methodAtHand);
+                                System.out.println(methodMatched);
                                 if (getPercentageDiff(Double.valueOf(metricFilesMap.get(methodAtHand)[6]), Double.valueOf(metricFilesMap.get(methodMatched)[6])) <= 30.00) {
-
                                     writeOnFile(getLineToWrite(atHandLines[0]+","+atHandLines[1]+","+atHandLines[2]+","+atHandLines[3]
                                             ,matchedLines[0]+","+matchedLines[1]+","+matchedLines[2]+","+matchedLines[3]
                                             ,metricFilesMap.get(methodAtHand), metricFilesMap.get(methodMatched)));
