@@ -30,16 +30,17 @@ public class BenchmarkCloneMetricsIntegrator {
                         String[] lineSplitted=line.replaceAll("\"","").split("~~");
                         metricFilesMap.put(lineSplitted[0]+"~~"+lineSplitted[1]+"~~"+lineSplitted[2]+"~~"+lineSplitted[27],
                                 lineSplitted);
-                        break;
                     }
                 }
             }
-
+            System.out.println("Metrics read complete");
             BufferedReader bfIjaMapping=new BufferedReader(new FileReader(Paths.get(inputIjaMappingPath).toString()));
             String line = "";
             while ((line = bfIjaMapping.readLine()) != null && Integer.parseInt(line.split(":")[1].split(",")[4])>25) {
                 ijaMappingList.add(line);
             }
+
+            System.out.println("ija mapping read complete");
             printWriter = new PrintWriter(Paths.get(outputPath).toString());
         }
             catch (IOException e){
@@ -82,6 +83,7 @@ public class BenchmarkCloneMetricsIntegrator {
                     String[] methodAtHandNameSplitted=methodAtHandSpliited[0].split("\\.");
                     String methodAtHand=methodAtHandSpliited[1].split(",")[0]+"~~"+methodAtHandNameSplitted[0]+"~~"+
                             methodAtHandNameSplitted[1]+"~~"+methodAtHandNameSplitted[2];
+                    System.out.println(methodAtHand);
                     //if (!((methodMetrics.get(i)[1]).equals("1"))) {
                     //String str="default~~JHawkDefaultPackage~~SoDoKu~~AC3(ConstraintSet,Domain)";
                         for (int j = i + 1; j < ijaMappingList.size(); j++) {
