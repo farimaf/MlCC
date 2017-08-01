@@ -31,6 +31,7 @@ public class BenchmarkCloneMetricsIntegrator {
                         String[] lineSplitted=line.replaceAll("\"","").split("~~");
                         metricFilesMap.put(lineSplitted[0]+"~~"+lineSplitted[1]+"~~"+lineSplitted[2]+"~~"+lineSplitted[27],
                                 lineSplitted);
+                        //break;
                     }
                 }
             }
@@ -91,12 +92,14 @@ public class BenchmarkCloneMetricsIntegrator {
                     //System.out.println(methodAtHand);
                     //if (!((methodMetrics.get(i)[1]).equals("1"))) {
                     //String str="default~~JHawkDefaultPackage~~SoDoKu~~AC3(ConstraintSet,Domain)";
+                    //methodAtHand=str;
                         for (int j = i + 1; j < ijaMappingList.size(); j++) {
                             String[] methodMatchedSpliited=ijaMappingList.get(j).split(":");
                             String[] methodMatchedNameSplitted=methodMatchedSpliited[0].split("\\.");
                             String methodMatched=methodMatchedSpliited[1].split(",")[0]+"~~"+methodMatchedNameSplitted[0]+"~~"+
                                     methodMatchedNameSplitted[1]+"~~"+methodMatchedNameSplitted[2];
                             String[] matchedLines=methodMatchedSpliited[1].split(",");
+                            //methodMatched=str;
                             if(metricFilesMap.containsKey(methodAtHand) && metricFilesMap.containsKey(methodMatched)) {
                                 System.out.println(methodAtHand);
                                 System.out.println(methodMatched);
@@ -158,18 +161,14 @@ public class BenchmarkCloneMetricsIntegrator {
 //        output[0]=firstLine[0]+"."+firstLine[1]+"."+firstLine[2]+"."+firstLine[27];
 //        output[1]=secondLine[0]+secondLine[1]+secondLine[2]+secondLine[27];
        // output[2]=isClone?"1":"0";
-        HashSet<String> toBeDeleted=new HashSet<>();
-        toBeDeleted.add(firstLine[18]);
-        toBeDeleted.add(firstLine[27]);
-        firstLine= removeElements(firstLine,toBeDeleted);
-        toBeDeleted=new HashSet<>();
-        toBeDeleted.add(secondLine[18]);
-        toBeDeleted.add(secondLine[27]);
-        secondLine= removeElements(secondLine,toBeDeleted);
+        String[] line1= removeNames(firstLine);
+        String[] line2= removeNames(secondLine);
+        System.out.println(line1.length);
+        System.out.println(line1[29]);
         output[0]=firstLines;
         output[1]=secondLines;
         for (int i = 2; i <output.length ; i++) {
-            output[i]=roundTwoDecimal(getPercentageDiff(Double.valueOf(firstLine[i+2]),Double.valueOf(secondLine[i+2]))).toString();
+            output[i]=roundTwoDecimal(getPercentageDiff(Double.valueOf(line1[i+2]),Double.valueOf(line2[i+2]))).toString();
         }
         //       output[3]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
 //        output[4]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
@@ -201,13 +200,13 @@ public class BenchmarkCloneMetricsIntegrator {
         return output;
     }
 
-    public static String[] removeElements(String[] input, HashSet<String> deleted) {
+    public static String[] removeNames(String[] input) {
         ArrayList<String> result = new ArrayList<>();
-        for(String item : input)
-            if(!deleted.contains(item))
-                result.add(item);
-
-        return result.toArray(input);
+        for (int i = 0; i <input.length ; i++) {
+            if (i!=18 && i!=27) result.add(input[i]);
+        }
+        String[] temp=new String[input.length-2];
+        return result.toArray(temp);
     }
     }
 
