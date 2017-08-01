@@ -1,6 +1,7 @@
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -157,11 +158,18 @@ public class BenchmarkCloneMetricsIntegrator {
 //        output[0]=firstLine[0]+"."+firstLine[1]+"."+firstLine[2]+"."+firstLine[27];
 //        output[1]=secondLine[0]+secondLine[1]+secondLine[2]+secondLine[27];
        // output[2]=isClone?"1":"0";
+        HashSet<String> toBeDeleted=new HashSet<>();
+        toBeDeleted.add(firstLine[18]);
+        toBeDeleted.add(firstLine[27]);
+        firstLine= removeElements(firstLine,toBeDeleted);
+        toBeDeleted=new HashSet<>();
+        toBeDeleted.add(secondLine[18]);
+        toBeDeleted.add(secondLine[27]);
+        secondLine= removeElements(secondLine,toBeDeleted);
         output[0]=firstLines;
         output[1]=secondLines;
         for (int i = 2; i <output.length ; i++) {
-            if ((i+2)!=18 && (i+2)!=27)
-                output[i]=roundTwoDecimal(getPercentageDiff(Double.valueOf(firstLine[i+2]),Double.valueOf(secondLine[i+2]))).toString();
+            output[i]=roundTwoDecimal(getPercentageDiff(Double.valueOf(firstLine[i+2]),Double.valueOf(secondLine[i+2]))).toString();
         }
         //       output[3]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
 //        output[4]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
@@ -191,6 +199,15 @@ public class BenchmarkCloneMetricsIntegrator {
 //        output[28]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
 //        output[29]=getPercentageDiff(Double.valueOf(firstLine[6]),Double.valueOf(secondLine[6])).toString();
         return output;
+    }
+
+    public static String[] removeElements(String[] input, HashSet<String> deleted) {
+        ArrayList<String> result = new ArrayList<>();
+        for(String item : input)
+            if(!deleted.contains(item))
+                result.add(item);
+
+        return result.toArray(input);
     }
     }
 
