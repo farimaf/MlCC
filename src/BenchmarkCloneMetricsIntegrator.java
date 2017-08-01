@@ -87,7 +87,7 @@ public class BenchmarkCloneMetricsIntegrator {
                     String methodAtHand=methodAtHandSpliited[1].split(",")[0]+"~~"+methodAtHandNameSplitted[0]+"~~"+
                             methodAtHandNameSplitted[1]+"~~"+methodAtHandNameSplitted[2];
                     String[] atHandLines=methodAtHandSpliited[1].split(",");
-                    System.out.println(methodAtHand);
+                    //System.out.println(methodAtHand);
                     //if (!((methodMetrics.get(i)[1]).equals("1"))) {
                     //String str="default~~JHawkDefaultPackage~~SoDoKu~~AC3(ConstraintSet,Domain)";
                         for (int j = i + 1; j < ijaMappingList.size(); j++) {
@@ -133,6 +133,7 @@ public class BenchmarkCloneMetricsIntegrator {
         line=line.substring(0,line.length()-1);
         try{
             printWriter.append(line+System.lineSeparator());
+            System.out.println(line);
 
         }
         catch (Exception e){
