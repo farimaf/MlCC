@@ -17,6 +17,7 @@ from sklearn.svm import SVC
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import make_scorer
+import pickle
 
 path="D:\\PhD\\Clone\\MlCC\\train_samples\\train_sample_100k.txt"
 colNames=["block1", "block2", "isClone", "COMP", "NOCL", "NOS", "HLTH", "HVOC", "HEFF", "HBUG", "CREF", "XMET", "LMET", "NLOC", "NOC", "NOA", "MOD", "HDIF", "VDEC", "EXCT", "EXCR", "CAST", "TDN", "HVOL", "NAND", "VREF", "NOPR", "MDN", "NEXP", "LOOP"]
@@ -37,13 +38,21 @@ start_time = time.time()
 clf.fit(X_train[:,2:X_train.size], Y_train.astype(bool))
 end_time=time.time()
 print("time to build model: "+str((end_time-start_time)))
+
+filename = 'cart_model.sav'
+pickle.dump(clf, open(filename, 'wb'))
+print("model saved")
+
 start_time = time.time()
-predictions = clf.predict(X_validation[:,2:X_train.size])
+predictions = clf.predict(X_validation[:,2:X_validation.size])
 #write results to file
 pred=np.reshape(predictions,(predictions.size,1))
 result=np.concatenate((X_validation[:,0:2],pred),axis=1)
-print(result)
-np.savetxt('prediction.txt',result,delimiter=',',fmt='%s,%s,%s')
+falsepos=[]
+for i in range(result.shape[0]):
+    if int(result[i][2]) == 1 and Y_validation[i] == 0:
+        falsepos.append(result[i])
+np.savetxt('result.txt',falsepos,delimiter=',',fmt='%s,%s,%s')
 #writing done
 end_time=time.time()
 print("time to predict: "+str((end_time-start_time)))
