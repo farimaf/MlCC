@@ -15,6 +15,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import make_scorer
 
 path="D:\\PhD\\Clone\\MlCC\\train_samples\\train_sample_100k.txt"
@@ -24,14 +25,33 @@ clones = pd.read_csv(path, names=colNames)
 
 
 array = clones.values
-X = array[:,3:30]
+X = array[:,[i for i in range(0,30) if i not in [2,4,14]]]
 Y = array[:,2]
 validation_size = 0.33
 seed = 12
 X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y, test_size=validation_size, random_state=seed)
 
+#Random Forest
+clf = RandomForestClassifier(n_estimators=5, max_depth=20, min_samples_split=10,min_samples_leaf=5)
+start_time = time.time()
+clf.fit(X_train[:,2:X_train.size], Y_train.astype(bool))
+end_time=time.time()
+print("time to build model: "+str((end_time-start_time)))
+start_time = time.time()
+predictions = clf.predict(X_validation[:,2:X_train.size])
+#write results to file
+pred=np.reshape(predictions,(predictions.size,1))
+result=np.concatenate((X_validation[:,0:2],pred),axis=1)
+print(result)
+np.savetxt('prediction.txt',result,delimiter=',',fmt='%s,%s,%s')
+#writing done
+end_time=time.time()
+print("time to predict: "+str((end_time-start_time)))
+print(confusion_matrix(Y_validation.astype(bool), predictions))
+print(classification_report(Y_validation.astype(bool), predictions))
+
 #Ada Boost
-clf = AdaBoostClassifier(base_estimator=DecisionTreeClassifier(), n_estimators=20, algorithm='SAMME.R', learning_rate=1,random_state=None)
+clf = AdaBoostClassifier(base_estimator=DecisionTreeClassifier(), n_estimators=5,  learning_rate=1)
 start_time = time.time()
 clf.fit(X_train, Y_train.astype(bool))
 end_time=time.time()
@@ -44,7 +64,7 @@ print(confusion_matrix(Y_validation.astype(bool), predictions))
 print(classification_report(Y_validation.astype(bool), predictions))
 
 #Decision Tree
-clf = DecisionTreeClassifier(max_depth=20,max_features='sqrt')
+clf = DecisionTreeClassifier()
 start_time = time.time()
 clf.fit(X_train, Y_train.astype(bool))
 end_time=time.time()
@@ -131,7 +151,9 @@ models.append(('KNN 5', KNeighborsClassifier(n_neighbors=5)))
 models.append(('KNN 10', KNeighborsClassifier(n_neighbors=10)))
 models.append(('CART', DecisionTreeClassifier()))
 models.append(('NB', GaussianNB()))
-#models.append(('SVM', SVC()))
+models.append(('Rand Forest', RandomForestClassifier(n_estimators=5)))
+models.append(('Ada Boost', AdaBoostClassifier(base_estimator=DecisionTreeClassifier(),n_estimators=5,learning_rate=1)))
+models.append(('SVM', SVC()))
 
 def classification_report_with_accuracy_score(y_true, y_pred):
     print (classification_report(y_true, y_pred)) # print classification report
