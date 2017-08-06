@@ -20,9 +20,11 @@ public class BenchmarkCloneMetricsIntegrator {
 
     public BenchmarkCloneMetricsIntegrator(){
         try {
+            System.out.println("enter source file name:");
             Scanner sc=new Scanner(System.in);
             sourceFile=sc.next();
             sourceFile="./new_benchmark/"+sourceFile;
+            outputPath="./output/benchmark_integrated_"+sourceFile+".txt";
  //           File folder = new File(inputMetricsPath);
    //         File[] files = folder.listFiles();
 //            for (int i = 0; i < files.length; i++) {
