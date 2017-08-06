@@ -1,51 +1,55 @@
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Created by Farima on 7/31/2017.
  */
 public class BenchmarkCloneMetricsIntegrator {
+        private static double MIN_NUM_STATEMENT_DIFF=0.3;
 
-
-        private HashMap<String,String[]> metricFilesMap=new HashMap<>();
-        private ArrayList<String> ijaMappingList=new ArrayList<>();
+        private ArrayList<String[]> metricFilesList=new ArrayList<>();
+        private HashMap<String,String> ijaMapping =new HashMap<>();
         private PrintWriter printWriter;
-        private String inputIjaMappingPath=  "./output/IjaMapping.txt";
-        private String inputMetricsPath=  "./input/benchmark_jhawk_features/";
-        private String inputClonePath= "./input/clone_pairs/";
-        private String outputPath= "./output/benchmark_integrated.txt";
+        private String inputIjaMappingPath=  "./output/IjaMapping_new.txt";
+        //private String inputMetricsPath=  "./input/benchmark_jhawk_features/";
+        private String inputMetricsPath=  "./new_benchmark/consolidatedMetrics.csv";
+        //private String inputClonePath= "./input/clone_pairs/";
+        private String outputPath= "./output/benchmark_integrated_new.txt";
 
     public BenchmarkCloneMetricsIntegrator(){
         try {
-            File folder = new File(inputMetricsPath);
-            File[] files = folder.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isFile()&&(files[i].getName().equals("sample.csv")||files[i].getName().equals("default.csv")||files[i].getName().equals("selected.csv"))) {
-                    BufferedReader bfMetrics = new BufferedReader(new FileReader( files[i]));
+ //           File folder = new File(inputMetricsPath);
+   //         File[] files = folder.listFiles();
+//            for (int i = 0; i < files.length; i++) {
+//                if (files[i].isFile()&&(files[i].getName().equals("sample.csv"))){//||files[i].getName().equals("default.csv")||files[i].getName().equals("selected.csv"))) {
+                    BufferedReader bfMetrics = new BufferedReader(new FileReader(inputMetricsPath ));
                     String line = bfMetrics.readLine();//to ignore header row
                     while ((line = bfMetrics.readLine()) != null) {
-                        String[] lineSplitted=line.replaceAll("\"","").split("~~");
-                        metricFilesMap.put(lineSplitted[0]+"~~"+lineSplitted[1]+"~~"+lineSplitted[2]+"~~"+lineSplitted[27],
-                                lineSplitted);
+                        line=line.replaceAll("\"","");
+                        metricFilesList.add(line.split("~~"));
                         //break;
                     }
+//                }
+ //           }
+            metricFilesList.sort(new Comparator<String[]>() {
+                @Override
+                public int compare(String[] o1, String[] o2) {
+                    return Integer.valueOf(o1[7])-Integer.valueOf(o2[7]);
+                }
+            });
+            System.out.println("Metrics read complete");
+            System.out.println("size:"+metricFilesList.size());
+            BufferedReader bfIjaMapping=new BufferedReader(new FileReader(Paths.get(inputIjaMappingPath).toString()));
+            line = "";
+            while ((line = bfIjaMapping.readLine()) != null ) {//insert methods having more than 25 tokens
+                if (Integer.parseInt(line.split(":")[1].split(",")[4]) > 25) {
+                    String[] lineSplitted = line.split(":");
+                    ijaMapping.put(lineSplitted[0],lineSplitted[1]);
                 }
             }
-            System.out.println("Metrics read complete");
-            System.out.println("size:"+metricFilesMap.size());
-            BufferedReader bfIjaMapping=new BufferedReader(new FileReader(Paths.get(inputIjaMappingPath).toString()));
-            String line = "";
-            while ((line = bfIjaMapping.readLine()) != null ) {//insert methods having more than 25 tokens
-               if(Integer.parseInt(line.split(":")[1].split(",")[4])>25)
-                   ijaMappingList.add(line);
-            }
-
             System.out.println("ija mapping read complete");
-            System.out.println("size:"+ijaMappingList.size());
+            System.out.println("size:"+ ijaMapping.size());
             printWriter = new PrintWriter(Paths.get(outputPath).toString());
         }
             catch (IOException e){
@@ -53,79 +57,48 @@ public class BenchmarkCloneMetricsIntegrator {
             }
         }
 
+    public static String[] removeNames(String[] input) {
+        ArrayList<String> result = new ArrayList<>();
+        for (int i = 0; i <input.length ; i++) {
+            if (i!=19 && i!=28) result.add(input[i]);
+        }
+        String[] temp=new String[input.length-2];
+        return result.toArray(temp);
+    }
+
     public void intergrate(){
-
-//        BufferedReader bfMetrics;
-//        try {
-//            for (String fileName : metricFilesList) {
-//                // read a project file for metrics
-//                bfMetrics = new BufferedReader(new FileReader(inputMetricsPath + fileName));
-//
-//                ArrayList<String[]> methodMetrics=new ArrayList<>();
-//                String line="";
-//                while ((line=bfMetrics.readLine())!=null){
-//                    // read all the rows in the metric file
-//                    methodMetrics.add(line.replace("\"","").split(","));
-//                }
-//                // read all clone pairs for this project
-//                HashSet<String> clonesSet = new HashSet<>();
-//                try {
-//                    BufferedReader bfClones = new BufferedReader(new FileReader(inputClonePath + fileName));
-//                    String lineClone="";
-//                    while ((lineClone=bfClones.readLine())!=null){
-//                        clonesSet.add(lineClone);
-//                    }
-//
-//                }
-//                catch (FileNotFoundException e){
-//                    System.out.println(fileName+ " not found");
-//                    continue;
-//                }
-
-
-                for (int i = 0; i <ijaMappingList.size() ; i++){
-                    String[] methodAtHandSpliited=ijaMappingList.get(i).split(":");
-                    String[] methodAtHandNameSplitted=methodAtHandSpliited[0].split("\\.");
-                    String methodAtHand=methodAtHandSpliited[1].split(",")[0]+"~~"+methodAtHandNameSplitted[0]+"~~"+
-                            methodAtHandNameSplitted[1]+"~~"+methodAtHandNameSplitted[2];
-                    String[] atHandLines=methodAtHandSpliited[1].split(",");
-                    //if (!((methodMetrics.get(i)[1]).equals("1"))) {
-                    //String str="default~~JHawkDefaultPackage~~SoDoKu~~AC3(ConstraintSet,Domain)";
-                    //methodAtHand=str;
-                        for (int j = i + 1; j < ijaMappingList.size(); j++) {
-                            String[] methodMatchedSpliited=ijaMappingList.get(j).split(":");
-                            String[] methodMatchedNameSplitted=methodMatchedSpliited[0].split("\\.");
-                            String methodMatched=methodMatchedSpliited[1].split(",")[0]+"~~"+methodMatchedNameSplitted[0]+"~~"+
-                                    methodMatchedNameSplitted[1]+"~~"+methodMatchedNameSplitted[2];
-                            String[] matchedLines=methodMatchedSpliited[1].split(",");
-                            //methodMatched=str;
-                            if(metricFilesMap.containsKey(methodAtHand) && metricFilesMap.containsKey(methodMatched)) {
-                                if (getPercentageDiff(Double.valueOf(metricFilesMap.get(methodAtHand)[6]), Double.valueOf(metricFilesMap.get(methodMatched)[6])) <= 30.00) {
-                                    System.out.println(methodAtHand);
-                                    writeOnFile(getLineToWrite(atHandLines[0]+","+atHandLines[1]+","+atHandLines[2]+","+atHandLines[3]
-                                            ,matchedLines[0]+","+matchedLines[1]+","+matchedLines[2]+","+matchedLines[3]
-                                            ,metricFilesMap.get(methodAtHand), metricFilesMap.get(methodMatched)));
-                                }
-                            }
-                       // }
-//                    }
-//                    else {
-//                        for (int j = i + 1; j < methodMetrics.size(); j++) {
-//                            boolean isClone=clonesSet.contains(methodMetrics.get(i)[0]+","+methodMetrics.get(j)[0])||
-//                                    clonesSet.contains(methodMetrics.get(j)[0]+","+methodMetrics.get(i)[0]);
-//                            if (getPercentageDiff(Double.valueOf(methodMetrics.get(i)[8]),Double.valueOf(methodMetrics.get(j)[8]))<=30.00)
-//                                writeOnFile(getLineToWrite(methodMetrics.get(i), methodMetrics.get(j), isClone));
-//                        }
-//
-//                    }
+        try {
+            BufferedReader bfMetrics =new BufferedReader(new FileReader(Paths.get(inputMetricsPath).toString()));
+            String line=bfMetrics.readLine();//to ignore header line
+            while ((line=bfMetrics.readLine())!=null) {
+                String[] lineSplitted = line.replaceAll("\"", "").split("~~");
+                int lowerIndex = getLowerIndex(Integer.valueOf(lineSplitted[7]));
+                int higherIndex = getHigherIndex(Integer.valueOf(lineSplitted[7]));
+                String fqmnAtHand = lineSplitted[1] + "." + lineSplitted[2] + "." + lineSplitted[3] + "." + lineSplitted[28];
+                int idAtHand=Integer.valueOf(lineSplitted[0]);
+                System.out.println(fqmnAtHand);
+                if (ijaMapping.containsKey(fqmnAtHand)) {
+                    String[] linesAtHand = ijaMapping.get(fqmnAtHand).split(",");
+                    for (int i = lowerIndex; i <= higherIndex; i++) {
+                        int idMatched = Integer.valueOf(metricFilesList.get(i)[0]);
+                        if (idAtHand < idMatched) {
+                            String fqmnMatched = metricFilesList.get(i)[1] + "." + metricFilesList.get(i)[2] + "." + metricFilesList.get(i)[3] + "." + metricFilesList.get(i)[28];
+                            if (ijaMapping.containsKey(fqmnMatched)) {
+                                String[] linesMatched = ijaMapping.get(fqmnMatched).split(",");
+                                writeOnFile(getLineToWrite(linesAtHand[0] + "," + linesAtHand[1] + "," + linesAtHand[2] + "," + linesAtHand[3]
+                                        , linesMatched[0] + "," + linesMatched[1] + "," +linesMatched[2]+","+ linesMatched[3]
+                                        , lineSplitted, metricFilesList.get(i)));
+                            } else continue;
+                        }
+                    }
                 }
-                //clonesSet.clear();
+                else continue;
             }
             printWriter.close();
-        //}
-//        catch (IOException e){
-//            e.printStackTrace();
-//        }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void writeOnFile(String[] lineParams){
@@ -136,7 +109,6 @@ public class BenchmarkCloneMetricsIntegrator {
         line=line.substring(0,line.length()-2);//changed to 2 becasue ~~ has to chars
         try{
             printWriter.append(line+System.lineSeparator());
-            System.out.println(line);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -161,18 +133,70 @@ public class BenchmarkCloneMetricsIntegrator {
         output[0]=firstLines;
         output[1]=secondLines;
         for (int i = 2; i <output.length ; i++) {
-            output[i]=roundTwoDecimal(getPercentageDiff(Double.valueOf(line1[i+2]),Double.valueOf(line2[i+2]))).toString();
+            output[i]=roundTwoDecimal(getPercentageDiff(Double.valueOf(line1[i+3]),Double.valueOf(line2[i+3]))).toString();
         }
         return output;
     }
 
-    public static String[] removeNames(String[] input) {
-        ArrayList<String> result = new ArrayList<>();
-        for (int i = 0; i <input.length ; i++) {
-            if (i!=18 && i!=27) result.add(input[i]);
+    private int getLowerIndex(int numStatements){
+        double lowerRange=Math.ceil(numStatements*(1-MIN_NUM_STATEMENT_DIFF));
+        if (Double.valueOf(metricFilesList.get(0)[7])<lowerRange) {
+            int low = 0;
+            int high = metricFilesList.size() - 1;
+            int mid;
+            int bestLow = -1;
+            while (low <= high) {
+                mid = (low + high) / 2;
+                if (Double.parseDouble(metricFilesList.get(mid)[7]) > lowerRange) {
+                    high = mid - 1;
+                } else if (Double.parseDouble(metricFilesList.get(mid)[7]) <= lowerRange) {
+                    bestLow = mid;
+                    low = mid + 1;
+                } else {
+                    // medians are equal
+                    bestLow = mid;
+                    break;
+                }
+            }
+            double temp = Double.parseDouble(metricFilesList.get(bestLow)[7]);
+            int index = --bestLow;
+            while (index > -1 && Double.parseDouble(metricFilesList.get(index)[7]) == temp) {
+                index--;
+            }
+            return ++index;
         }
-        String[] temp=new String[input.length-2];
-        return result.toArray(temp);
+        return 0;
+    }
+
+    private int getHigherIndex(int numStatements){
+        double higherRange=Math.floor(numStatements/(1-MIN_NUM_STATEMENT_DIFF));
+        if (Double.valueOf(metricFilesList.get(metricFilesList.size()-1)[7])>higherRange) {
+            int low = 0;
+            int high = metricFilesList.size() - 1;
+            int mid = 0;
+            int bestHigh = -1;
+            while (low <= high && mid <= metricFilesList.size() - 1 && mid >= 0) {
+                mid = (low + high) / 2;
+                if (Double.parseDouble(metricFilesList.get(mid)[7]) >= higherRange) {
+                    bestHigh = mid;
+                    high = mid - 1;
+                } else if (Double.parseDouble(metricFilesList.get(mid)[7]) < higherRange) {
+                    low = mid + 1;
+                } else {
+                    // medians are equal
+                    bestHigh = mid;
+                    break;
+                }
+            }
+            double temp = Double.parseDouble(metricFilesList.get(bestHigh)[7]);
+            int index = ++bestHigh;
+            while (index < metricFilesList.size() && Double.parseDouble(metricFilesList.get(index)[7]) == temp) {
+                index++;
+            }
+            return --index;
+        }
+        else
+            return metricFilesList.size()-1;
     }
     }
 
