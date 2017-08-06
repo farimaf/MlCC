@@ -16,9 +16,13 @@ public class BenchmarkCloneMetricsIntegrator {
         private String inputMetricsPath=  "./new_benchmark/consolidatedMetrics.csv";
         //private String inputClonePath= "./input/clone_pairs/";
         private String outputPath= "./output/benchmark_integrated_new.txt";
+        private String sourceFile="";
 
     public BenchmarkCloneMetricsIntegrator(){
         try {
+            Scanner sc=new Scanner(System.in);
+            sourceFile=sc.next();
+            sourceFile="./new_benchmark/"+sourceFile;
  //           File folder = new File(inputMetricsPath);
    //         File[] files = folder.listFiles();
 //            for (int i = 0; i < files.length; i++) {
@@ -68,7 +72,7 @@ public class BenchmarkCloneMetricsIntegrator {
 
     public void intergrate(){
         try {
-            BufferedReader bfMetrics =new BufferedReader(new FileReader(Paths.get(inputMetricsPath).toString()));
+            BufferedReader bfMetrics =new BufferedReader(new FileReader(Paths.get(sourceFile).toString()));
             String line=bfMetrics.readLine();//to ignore header line
             while ((line=bfMetrics.readLine())!=null) {
                 String[] lineSplitted = line.replaceAll("\"", "").split("~~");
