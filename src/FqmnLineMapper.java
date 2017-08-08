@@ -10,9 +10,9 @@ import java.util.HashMap;
  */
 public class FqmnLineMapper {
     private String blockstatsInputPath= "./new_benchmark/file_block_stats/files-stats-";
-   // private String blockstatsInputPath= "C:\\clone_data\\new benchmark\\file_block_stats\\files-stats-";
+    //private String blockstatsInputPath= "C:\\clone_data\\new benchmark\\file_block_stats\\files-stats-";
     private String blocktokensInputPath= "./new_benchmark/blocks_tokens/files-tokens-";
-   // private String blocktokensInputPath= "C:\\clone_data\\new benchmark\\blocks_tokens\\files-tokens-";
+    //private String blocktokensInputPath= "C:\\clone_data\\new benchmark\\blocks_tokens\\files-tokens-";
     PrintWriter printWriter=null;
 
     private static int DEFAULT_dir=11;
@@ -31,9 +31,9 @@ public class FqmnLineMapper {
         try {
             fqmnLineMapper.printWriter = new PrintWriter(Paths.get("./output/IjaMapping_new.txt").toString());
             for (int i = 0; i < 3; i++) {
-                fqmnLineMapper.blockstatsInputPath="./new_benchmark/file_block_stats/files-stats-";
-                fqmnLineMapper.blockstatsInputPath = fqmnLineMapper.blockstatsInputPath + i + ".stats";
-                BufferedReader bufferedReader = new BufferedReader(new FileReader(Paths.get(fqmnLineMapper.blockstatsInputPath).toString()));
+                String blockstatsInputPath=fqmnLineMapper.blockstatsInputPath;
+                blockstatsInputPath = blockstatsInputPath + i + ".stats";
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(Paths.get(blockstatsInputPath).toString()));
                 String line = "";
                 while ((line = bufferedReader.readLine()) != null) {
                     String[] lineSplitted = line.replaceAll("\"","").split(",");
@@ -46,17 +46,17 @@ public class FqmnLineMapper {
                         methodIdMethodStatMap.put(lineSplitted[1], lineSplitted[6] + "," + lineSplitted[7]);
                     }
                 }
-                fqmnLineMapper.blocktokensInputPath="./new_benchmark/blocks_tokens/files-tokens-";
-                fqmnLineMapper.blocktokensInputPath=fqmnLineMapper.blocktokensInputPath+i+".tokens";
-                bufferedReader = new BufferedReader(new FileReader(Paths.get(fqmnLineMapper.blocktokensInputPath).toString()));
+                String blocktokensInputPath=fqmnLineMapper.blocktokensInputPath;
+                blocktokensInputPath=blocktokensInputPath+i+".tokens";
+                bufferedReader = new BufferedReader(new FileReader(Paths.get(blocktokensInputPath).toString()));
                 line = "";
                 while ((line = bufferedReader.readLine()) != null) {
                     String[] lineSplitted = line.split("~~");
-                    //output line format: FQMN:directory,filename,start_line,end_line,#tokens,directoryid,fileid
+                    //output line format: FQMN:directory,filename,start_line,end_line,#tokens,#unique_tokens,directoryid,fileid
                     String lineToWrite = fileIdFileNameMap.get(lineSplitted[1].substring(5))+"." +lineSplitted[4] + ":"
                             +fileIdFileNameMap.get(lineSplitted[1].substring(5)).split("_")[0]+","+
                             fileIdFileNameMap.get(lineSplitted[1].substring(5)).split("_")[1]+".java"+","+
-                            methodIdMethodStatMap.get(lineSplitted[1]) + "," + lineSplitted[2] + "," + lineSplitted[0] + "," + lineSplitted[1];
+                            methodIdMethodStatMap.get(lineSplitted[1]) + "," + lineSplitted[2] +"," + lineSplitted[3] + "," + lineSplitted[0] + "," + lineSplitted[1];
                     System.out.println(lineToWrite);
                     fqmnLineMapper.writeToFile(lineToWrite);
                 }
