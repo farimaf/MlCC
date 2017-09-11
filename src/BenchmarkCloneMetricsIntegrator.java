@@ -23,7 +23,6 @@ public class BenchmarkCloneMetricsIntegrator {
             System.out.println("enter source file name:");
             Scanner sc=new Scanner(System.in);
             sourceFile=sc.next();
-            outputPath="./output/benchmark_integrated_"+sourceFile+".txt";
             sourceFile="./new_benchmark/"+sourceFile;
 
  //           File folder = new File(inputMetricsPath);

@@ -12,14 +12,14 @@ public class TrainRandomSampler {
     private String inputPath= "C:\\clone_data\\train.txt";
     private HashSet<String> readLines=new HashSet<>();
 
-    private final int SAMPLE_COUNT=22151199*2;
+    private final int SAMPLE_COUNT=100000;
     private PrintWriter printWriter;
 
     public TrainRandomSampler(){
         try{
             BufferedReader bufferedReader=new BufferedReader(new FileReader(inputPath));
             //linesCount=bufferedReader.lines().count();
-            printWriter=new PrintWriter(Paths.get("./output/train_integrated/train_sample_large.txt").toString());
+            printWriter=new PrintWriter(Paths.get("./output/train_integrated/train_100k_new.txt").toString());
         }
         catch (Exception e){
             e.printStackTrace();

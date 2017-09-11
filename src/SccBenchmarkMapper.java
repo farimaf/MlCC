@@ -8,9 +8,9 @@ import java.util.HashMap;
  * Created by Farima on 8/11/2017.
  */
 public class SccBenchmarkMapper {
-    private String inputIjaMappingPath=  "./output/IjaMapping_new_uniquetokens.txt";
-    private String inputSCCPath=  "./input/consolidated_clone_pairs.txt";
-    private String outputPath="./output/SCC_BenchmarkFormat.txt";
+    private String inputIjaMappingPath=  "/scratch/mondego/local/farima/farima-socket-code/recall_exp_benchmark/scc_files/output/IjaMapping_new_18aug.txt";
+    private String inputSCCPath=  "/scratch/mondego/local/farima/farima-socket-code/recall_exp_benchmark/scc_files/clone-pairs-by-scc-on-pruned-blocks.file";
+    private String outputPath="./output/SCC_pruned_BenchmarkFormat.txt";
     public static void main(String[] args) {
         HashMap<String,String> ijaMapping=new HashMap<>();
         try{
@@ -29,7 +29,7 @@ public class SccBenchmarkMapper {
             BufferedReader bfSCC=new BufferedReader(new FileReader(Paths.get(sccBenchmarkMapper.inputSCCPath).toString()));
             while ((line=bfSCC.readLine())!=null){
                 String[] lineSplitted=line.split(",");
-                printWriter.append(ijaMapping.get(lineSplitted[0]+","+lineSplitted[1])+","+ijaMapping.get(lineSplitted[2]+","+lineSplitted[3]));
+                printWriter.append(ijaMapping.get(lineSplitted[0]+","+lineSplitted[1])+","+ijaMapping.get(lineSplitted[2]+","+lineSplitted[3])+System.lineSeparator());
             }
             printWriter.close();
             bfSCC.close();
